@@ -1,0 +1,95 @@
+# 📝 Grammar Correction using T5 Transformer
+
+This project implements a grammar correction system using the T5 Transformer model, fine-tuned on a custom dataset of incorrect and corrected English sentences.
+
+---
+
+## 📌 Project Objective
+
+To develop an AI-powered grammar correction model that takes grammatically incorrect English sentences and outputs the corrected version.
+
+**Example:**
+
+- Incorrect: `we are go to school`  
+  Correct: `we are going to school`
+
+- Incorrect: `they is working`  
+  Correct: `they are working`
+
+---
+
+## 📁 Dataset
+
+- Custom dataset stored in **SQLite** database.
+- Each entry has:
+  - `incorrect_sentence`
+  - `correct_sentence`
+- Sample entries:
+  - `i has my own house` → `i have my own house`
+  - `he go to work every day` → `he goes to work every day`
+
+---
+
+## ⚙️ Data Preparation
+
+- Data loaded from SQLite and split into:
+  - Training set
+  - Validation set
+  - Test set
+- Input format for T5:  
+  `"fix grammar: <incorrect_sentence>"`
+- Tokenized using Hugging Face's T5 tokenizer.
+
+---
+
+## 🧠 Model Details
+
+- Model used: `T5-small`
+- Pre-trained by Hugging Face for text-to-text tasks.
+- Fine-tuned on our grammar correction task using the Trainer API.
+
+---
+
+## 🧪 Hyperparameters
+
+| Hyperparameter | Value     | Effect Description |
+|----------------|-----------|--------------------|
+| Learning Rate  | `3e-4`    | Fast learning, stable at this setting |
+| Epochs         | `3`       | Enough to generalize without overfitting |
+| Batch Size     | `16`      | Balanced for memory and stability |
+| Weight Decay   | `0.01`    | Regularization to prevent overfitting |
+| Eval Steps     | `500`     | Intermediate checks during training |
+
+---
+
+## 🏁 Training Process
+
+- Trainer API used to fine-tune model.
+- Periodic evaluation to avoid overfitting.
+- Checkpoints saved during training.
+
+---
+
+## ✅ Model Evaluation
+
+Evaluated on unseen test samples.
+
+**Examples:**
+
+- Input: `i has a car`  
+  Output: `i have a car`
+
+- Input: `he go to school`  
+  Output: `he goes to school`
+
+---
+
+## 🚀 Inference
+
+You can run inference on new sentences:
+
+```python
+input_text = "fix grammar: she do not like ice cream"
+inputs = tokenizer.encode(input_text, return_tensors="pt")
+outputs = model.generate(inputs)
+print(tokenizer.decode(outputs[0], skip_special_tokens=True))
